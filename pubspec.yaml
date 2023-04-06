@@ -1,0 +1,27 @@
+name: nostr_tools
+description: A Dart package that makes it easy to work with the nostr protocol and develop Nostr clients.
+version: 1.0.0
+repository: https://github.com/aniketambore/nostr-tools
+homepage: https://github.com/aniketambore/nostr-tools
+license: MIT
+
+environment:
+  sdk: '>=2.19.0 <3.0.0'
+
+dependencies:
+  convert: ^3.1.1
+  crypto: ^3.0.2
+  bip340: ^0.1.0
+  bech32: ^0.2.2
+  web_socket_channel: ^2.3.0
+  http: ^0.13.5
+  kepler: ^1.0.3
+  pointycastle: ^3.7.2
+
+  bip39: ^1.0.6
+  bip32: ^2.0.0
+  meta: ^1.8.0
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.0

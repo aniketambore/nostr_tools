@@ -1,0 +1,26 @@
+name: nostr_tools_ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  verify_nostr_tools:
+    name: nostr_tools pub package
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Dart SDK
+      uses: dart-lang/setup-dart@v1
+    
+    - name: Install dependencies
+      run: dart pub get
+    
+    - name: Test
+      runt: dart test
