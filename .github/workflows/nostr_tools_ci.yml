@@ -23,4 +23,4 @@ jobs:
       run: dart pub get
     
     - name: Test
-      runt: dart test
+      run: dart test
