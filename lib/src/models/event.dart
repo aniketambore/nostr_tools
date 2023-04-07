@@ -1,4 +1,5 @@
 import 'package:nostr_tools/src/utils/utils.dart';
+import 'exceptions.dart';
 
 /// Represents an event, which is the only object type in the system.
 ///
@@ -55,11 +56,11 @@ class Event {
     this.subscriptionId,
     bool verify = true,
   }) {
-    if (verify && id.isNotEmpty && sig.isNotEmpty) {
-      assert(
-        Bip340Util.verify(pubkey, id, sig) == true,
-        'Failed to verify signature for event with id $id and pubkey $pubkey',
-      );
+    if (verify && id.isNotEmpty && sig.isNotEmpty && pubkey.isNotEmpty) {
+      if (Bip340Util.verify(pubkey, id, sig) != true) {
+        throw SignatureVerificationException(
+            'Failed to verify signature $sig for event with id $id and pubkey $pubkey');
+      }
     }
   }
 

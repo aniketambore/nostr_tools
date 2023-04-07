@@ -31,7 +31,20 @@ class RelayPool implements RelayPoolApi {
         _channels.add(channel);
         channel.stream.listen(
           (event) {
-            final message = Message.deserialize(event);
+            Message message;
+            try {
+              message = Message.deserialize(event as String);
+            } catch (e) {
+              if (e is SignatureVerificationException) {
+                // If a SignatureVerificationException is caught, propagate it to the caller
+                controller.addError(e);
+                return;
+              } else {
+                // If some other exception is caught, rethrow it
+                rethrow;
+              }
+            }
+
             String? id = message.message is Event ? message.message.id : null;
             if (!_connectedRelays.contains(relayUrl)) {
               _connectedRelays.add(relayUrl);

@@ -7,3 +7,4 @@ export 'profile_pointer.dart';
 export 'event_pointer.dart';
 export 'address_pointer.dart';
 export 'metadata.dart';
+export 'exceptions.dart';

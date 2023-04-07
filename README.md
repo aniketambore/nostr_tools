@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/package_logo.png" alt="nostr_tools package logo" /></p>
+<p align="center"><img src="https://raw.githubusercontent.com/aniketambore/nostr_tools/main/assets/package_logo.png" alt="nostr_tools package logo" /></p>
 <p align="center">A Dart package that makes it easy to work with the <b>nostr</b> protocol and develop <b>nostr</b> clients.</p>
 
 # Usage

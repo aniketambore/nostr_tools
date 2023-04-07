@@ -37,7 +37,21 @@ class Relay implements RelayApi {
     _channel.stream.listen(
       (event) {
         // Deserialize the event message and add it to the stream controller
-        final message = Message.deserialize(event as String);
+        Message message;
+
+        try {
+          message = Message.deserialize(event as String);
+        } catch (e) {
+          if (e is SignatureVerificationException) {
+            // If a SignatureVerificationException is caught, propagate it to the caller
+            controller.addError(e);
+            return;
+          } else {
+            // If some other exception is caught, rethrow it
+            rethrow;
+          }
+        }
+
         if (!_connected) {
           // If this is the first event after connecting to the server, set the _connected flag to true and call the onEvent callback with the RelayEvent.connect event
           _connected = true;
