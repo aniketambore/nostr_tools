@@ -1,6 +1,3 @@
-import 'package:nostr_tools/src/utils/utils.dart';
-import 'exceptions.dart';
-
 /// Represents an event, which is the only object type in the system.
 ///
 /// An event has the following properties:
@@ -55,7 +52,9 @@ class Event {
     this.pubkey = '',
     this.subscriptionId,
     bool verify = true,
-  }) {
+  });
+  /*
+  {
     if (verify && id.isNotEmpty && sig.isNotEmpty && pubkey.isNotEmpty) {
       if (Bip340Util.verify(pubkey, id, sig) != true) {
         throw SignatureVerificationException(
@@ -63,6 +62,7 @@ class Event {
       }
     }
   }
+  */
 
   /// Converts this instance of the `Event` class to a JSON object.
   Map<String, dynamic> toJson() => {

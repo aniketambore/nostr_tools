@@ -1,3 +1,7 @@
+## 1.0.4
+
+- `SignatureVerificationException` can now be handled by the client-side. This update makes it easier for developers to catch and handle this exception without having disrupting the events coming in.
+
 ## 1.0.3
 
 - Handling `SignatureVerificationException`
