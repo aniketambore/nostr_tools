@@ -1,4 +1,4 @@
-## 1.0.4
+## 1.0.6
 
 - Resolved type casting issues with JSON data in `Metadata` class
 
