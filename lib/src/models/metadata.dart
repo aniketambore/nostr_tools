@@ -77,9 +77,15 @@ class Metadata {
         username: json['username'] as String?,
         displayName: json['displayName'] as String?,
         nip05: json['nip05'] as String?,
-        followingCount: json['followingCount'] as int?,
-        followersCount: json['followersCount'] as int?,
-        nip05valid: json['nip05valid'] as bool?,
+        followingCount: json['followingCount'] is String
+            ? int.parse(json['followingCount'] as String)
+            : json['followingCount'] as int?,
+        followersCount: json['followersCount'] is String
+            ? int.parse(json['followersCount'] as String)
+            : json['followersCount'] as int?,
+        nip05valid: json['nip05valid'] is String
+            ? json['nip05valid'] == 'true'
+            : json['nip05valid'] as bool?,
         zapService: json['zapService'] as String?,
       );
 }
