@@ -6,3 +6,11 @@ class SignatureVerificationException implements Exception {
   @override
   String toString() => 'SignatureVerificationException: $message';
 }
+
+class ChecksumVerificationException implements Exception {
+  final String message;
+  ChecksumVerificationException(this.message);
+
+  @override
+  String toString() => 'ChecksumVerificationException: $message';
+}

@@ -175,7 +175,13 @@ class Nip19Impl implements Nip19 {
 
   @override
   Map<String, dynamic> decode(String nip19) {
-    Bech32 bech32 = const Bech32Codec().decode(nip19, _bech32MaxSize);
+    Bech32 bech32;
+    try {
+      bech32 = const Bech32Codec().decode(nip19, _bech32MaxSize);
+    } catch (e) {
+      throw ChecksumVerificationException('Checksum verification failed');
+    }
+
     List<int> data = _convertBits(bech32.data, 5, 8, false);
     final prefix = bech32.hrp;
 

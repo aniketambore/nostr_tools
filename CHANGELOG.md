@@ -1,3 +1,8 @@
+## 1.0.7
+
+- Added `isValidPrivateKey` method for the `KeyApi` class, allowing developers to validate private keys.
+- Introduced `ChecksumVerificationException` for Nip19 `decode` method, providing better error handling for checksum verification.
+
 ## 1.0.6
 
 - Resolved type casting issues with JSON data in `Metadata` class

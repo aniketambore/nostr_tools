@@ -40,4 +40,11 @@ abstract class KeyApi {
   ///
   /// Returns a [String] representing the generated public key.
   String getPublicKey(String privateKey);
+
+  /// Returns whether the given private key is valid.
+  ///
+  /// The [privateKeyHex] parameter should be a hexadecimal [String] representing a private key.
+  ///
+  /// Returns `true` if the private key is valid, and `false` otherwise.
+  bool isValidPrivateKey(String privateKeyHex);
 }
