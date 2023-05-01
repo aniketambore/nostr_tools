@@ -6,3 +6,4 @@ export 'nip05_impl.dart';
 export 'nip19_impl.dart';
 export 'nip04_impl.dart';
 export 'nip06_impl.dart';
+export 'nip46_impl.dart';

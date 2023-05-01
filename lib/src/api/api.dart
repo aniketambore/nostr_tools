@@ -6,3 +6,4 @@ export 'nip05_api.dart';
 export 'nip19_api.dart';
 export 'nip04_api.dart';
 export 'nip06_api.dart';
+export 'nip46_api.dart';
