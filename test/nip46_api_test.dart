@@ -14,13 +14,17 @@ void main() {
     'target': 'b889ff5b1513b641e2a139f661a661364979c5beee91842f8f0ef42ab558e9d4',
   };
 
-  final nip46 = Nip46();
+  final nip46 = Nip46(target: testUri['target'] as String, relay: testUri['relay'] as String, metaData: testUri['metadata'] as dynamic);
 
   test('fromURI', () {
-    nip46.init(testUri);
     final url = nip46.fromURI(nip46.toString());
-    expect(url["target"], equals(testUri['target']));
-    expect(url["relay"], equals(testUri['relay']));
-    expect(url["metadata"], equals(testUri['metadata']));
+    expect(url.target, equals(testUri['target']));
+    expect(url.relay, equals(testUri['relay']));
+    expect(url.metaData, equals(testUri['metadata']));
+  });
+
+  test('connect', () {
+    final connect = nip46.connect({});
+    expect(connect, equals('fromconnectURI return'));
   });
 }

@@ -1,35 +1,51 @@
 /// This library provides the interface for NIP-46.
 library api.nip46;
 
-import '../impl/impl.dart';
+import 'dart:convert';
+import 'dart:core';
 
-/// The abstract class [Nip46] is the public API for nostr-connect apps and signers.
-abstract class Nip46 {
-  /// Creates a [Nip46Impl] instance.
-  factory Nip46() => Nip46Impl();
+class Nip46 {
+  final String relay;
+  final String target;
+  final Map<String, dynamic> metaData;
 
-  Map<String, dynamic> fromURI(String uri);
-  Map<String, dynamic> init(Map<String, dynamic> uri);
+  Nip46({
+    required this.relay,
+    required this.target,
+    required this.metaData
+  });
+  Nip46 fromURI(String uri) {
+    final url = Uri.parse(uri);
+    final target = url.host;
+    if (target == null) throw UnimplementedError();
 
-  // String connect(String hex);
-  // String approve();
-  // String reject();
-  // String disconnect() {
-  //   return "disconnect";
+    final relay = url.queryParameters["relay"];
+    if (relay == null) throw UnimplementedError();
+
+    final metadata = url.queryParameters["metadata"];
+    if (metadata == null) throw UnimplementedError();
+
+    final metadataMap = jsonDecode(metadata);
+
+    return Nip46(relay: relay, target: target, metaData: metadataMap);
+  }
+  String toString() {
+    
+    return "nostrconnect://$target?metadata=${Uri.encodeComponent(
+      jsonEncode(metaData)
+    )}&relay=${Uri.encodeComponent(relay)}";
+  }
+  String connect(Map<String, dynamic> hex) {
+    return 'fromconnectURI return';
+  }
+
+    // final String target;
+  
+  // String approve() {
+  //   return 'nsec1';
   // }
-  // String getPublicKey() {
-  //   return "public key";
-  // }
-  // String signEvent() {
-  //   return "signing";
-  // }
-  // String describe() {
-  //   throw UnimplementedError();
-  // }
-  // String delegate() {
-  //   throw UnimplementedError();
-  // }
-  // Future<List<String>> getRelays() {
-  //   throw UnimplementedError();
+  
+  // String reject() {
+  //   return 'nsec1';
   // }
 }
