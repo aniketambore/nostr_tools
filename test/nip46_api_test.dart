@@ -16,7 +16,7 @@ void main() {
 
   final nip46 = Nip46(target: testUri['target'] as String, relay: testUri['relay'] as String, metaData: testUri['metadata'] as dynamic);
 
-  test('fromURI', () {
+  test('toString and fromURI', () {
     final url = nip46.fromURI(nip46.toString());
     expect(url.target, equals(testUri['target']));
     expect(url.relay, equals(testUri['relay']));

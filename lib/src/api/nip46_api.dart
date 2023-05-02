@@ -29,8 +29,9 @@ class Nip46 {
 
     return Nip46(relay: relay, target: target, metaData: metadataMap);
   }
+
+  @override
   String toString() {
-    
     return "nostrconnect://$target?metadata=${Uri.encodeComponent(
       jsonEncode(metaData)
     )}&relay=${Uri.encodeComponent(relay)}";
@@ -39,7 +40,7 @@ class Nip46 {
     return 'fromconnectURI return';
   }
 
-    // final String target;
+  // final String target;
   
   // String approve() {
   //   return 'nsec1';
