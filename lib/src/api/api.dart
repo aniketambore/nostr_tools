@@ -7,3 +7,4 @@ export 'nip19_api.dart';
 export 'nip04_api.dart';
 export 'nip06_api.dart';
 export 'nip46_api.dart';
+export 'rpc_api.dart';

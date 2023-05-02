@@ -4,6 +4,8 @@ library api.nip46;
 import 'dart:convert';
 import 'dart:core';
 
+import '../../nostr_tools.dart';
+
 class Nip46 {
   final String relay;
   final String target;
@@ -36,17 +38,14 @@ class Nip46 {
       jsonEncode(metaData)
     )}&relay=${Uri.encodeComponent(relay)}";
   }
-  String connect(Map<String, dynamic> hex) {
-    return 'fromconnectURI return';
-  }
 
-  // final String target;
-  
-  // String approve() {
-  //   return 'nsec1';
-  // }
-  
-  // String reject() {
-  //   return 'nsec1';
-  // }
+  String connect(
+    String secretKey,
+    [String? relay]
+  ) {
+    final keyApi = KeyApi();
+    final nostrRPC = NostrRPCApi(relay: relay ?? this.relay, pubkey: keyApi.getPublicKey(secretKey), secretKey: secretKey);
+
+    return "connect return string";
+  }
 }
