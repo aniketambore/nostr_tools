@@ -1,16 +1,11 @@
 library api.relay;
 
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 import '../../nostr_tools.dart';
 import '../models/models.dart';
 import '../impl/impl.dart';
-
-class RPCRequest {
-  String? id;
-  String? method;
-  List<dynamic>? params;
-}
 
 final nip04 = Nip04();
 final keyApi = KeyApi();
@@ -21,7 +16,7 @@ Future<Event> prepareEvent(String secretKey, String pubkey, String content) asyn
 
   final event = Event(
     kind: 24133,
-    created_at: DateTime.now() as int,
+    created_at: DateTime.now().millisecondsSinceEpoch,
     pubkey: keyApi.getPublicKey(secretKey),
     tags: [['p', pubkey]],
     content: cipherText,
@@ -36,6 +31,17 @@ Future<Event> prepareEvent(String secretKey, String pubkey, String content) asyn
   }
 
   return signedEvent;
+}
+
+String randomID() {
+  return Random().nextInt(9007199254740992).toString();
+}
+
+class RPCRequest {
+  String? method;
+  List<String>? params;
+  // ID is optional, the others are required
+  String? id;
 }
 
 bool containsTag(List<List<String>> tags, String tagType) {
@@ -76,13 +82,20 @@ class NostrRPCApi {
 
   Future<dynamic> call (
     String target,
-    RPCRequest request,
-    bool? skipResponse,
-    num? timeout,
+    Map<String, dynamic> request,
+    {
+      bool? skipResponse,
+      num? timeout,
+    }
   ) async {
     final relay = RelayApi(relayUrl: this.relay);
     final stream = await relay.connect();
-    final preppedRequest = jsonEncode(request);
+    final reqId = request['id'] ?? randomID();
+    final preppedRequest = jsonEncode({
+      'id': reqId,
+      'method': request['method'],
+      'params': request['params'],
+    });
     final preppedEvent = await prepareEvent(secretKey, pubkey, preppedRequest);
 
     final filter = Filter(
@@ -120,7 +133,7 @@ class NostrRPCApi {
             if (!isValidResponse(payload)) return;
 
             // ignore all the events that are not for this request
-            if (payload['id'] != request.id) return;
+            if (payload['id'] != reqId) return;
 
             // if the response is an error, reject the promise
             if (payload['error'] != null) {
@@ -137,6 +150,95 @@ class NostrRPCApi {
         }
       });
     });
+  }
 
+  Future<void> listen() async {
+    final relay = RelayApi(relayUrl: this.relay);
+    final stream = await relay.connect();
+
+    final filter = Filter(
+      kinds: [24133],
+      p: [pubkey],
+      since: DateTime.now().millisecondsSinceEpoch,
+    );
+    final sub = relay.sub([filter]);
+
+    // watch relayStream messages
+    stream.listen((Message message) async {
+      Event event = message.message;
+      if (event.kind != 24133) return;
+      if (!containsTag(event.tags, "p")) return;
+
+      try {
+        final plaintext = nip04.decrypt(
+          secretKey,
+          event.pubkey,
+          event.content,
+        );
+        if (plaintext.isEmpty) throw new Exception('failed to decrypt event');
+        final payload = jsonDecode(plaintext);
+        // ignore all the events that are not NostrRPCResponse events
+        if (!isValidResponse(payload)) return;
+
+        // handle request
+        if (payload.method == "get_public_key") {
+          final response = await handleRequest(payload, event);
+
+          final body = prepareResponse(
+            response.id,
+            response.result,
+            response.error,
+          );
+
+          final responseEvent = await prepareEvent(
+            this.self.secret,
+            event.pubkey,
+            body,
+          );
+
+          // send response via relay
+          relay.publish(responseEvent);
+        } else {
+          throw Exception('Method not yet implemented');
+        }
+      } catch (e) {
+        throw Exception(e);
+      }
+
+    });
+
+    return sub;
+  }
+
+  dynamic handleRequest(Map<String, dynamic> payload, Event event) async {
+    final method = payload['method'];
+    final params = payload['params'];
+
+    switch (method) {
+      case 'get_public_key':
+        return this.getPublicKey(params);
+      case 'sign_event':
+        return this.getPublicKey(params);
+      default:
+        throw Exception('Method not yet implemented');
+    }
+  }
+
+  Future<String> getPublicKey(List<String> params) async {
+    final target = params[0];
+    final key = await keyApi.getPublicKey(target);
+    return key;
+  }
+
+  Future<String> signEvent(List<String> params) async {
+    final target = params[0];
+    final event = params[1];
+    final key = await keyApi.getPublicKey(target);
+    final signedEvent = await prepareEvent(
+      this.self.secret,
+      key,
+      event,
+    );
+    return signedEvent;
   }
 }
