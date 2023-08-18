@@ -1,3 +1,7 @@
+## 1.0.8
+
+- Fixed a bug in `relay_impl` and `relay_pool_impl` that caused the first message to be skipped when calling `RelayEvent.connect`. This ensures proper addition of messages to the controller. (Pull Request #2)
+
 ## 1.0.7
 
 - Added `isValidPrivateKey` method for the `KeyApi` class, allowing developers to validate private keys.
