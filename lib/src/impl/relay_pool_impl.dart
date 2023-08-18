@@ -40,7 +40,8 @@ class RelayPool implements RelayPoolApi {
                 relayUrl,
               ); // remove from failed relays set if previously failed
               onEvent?.call(RelayEvent.connect);
-            } else if (id != null && !_receivedMessageIds.contains(id)) {
+            }
+            if (id != null && !_receivedMessageIds.contains(id)) {
               _receivedMessageIds.add(id);
               controller.add(message);
             }

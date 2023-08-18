@@ -43,10 +43,8 @@ class Relay implements RelayApi {
           // If this is the first event after connecting to the server, set the _connected flag to true and call the onEvent callback with the RelayEvent.connect event
           _connected = true;
           onEvent?.call(RelayEvent.connect);
-        } else {
-          // Otherwise, add the event message to the stream controller
-          controller.add(message);
         }
+        controller.add(message);
       },
       onError: (error) {
         // If there is an error with the WebSocket channel, add the error to the stream controller
