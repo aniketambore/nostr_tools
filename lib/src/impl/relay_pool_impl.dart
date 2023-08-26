@@ -98,7 +98,7 @@ class RelayPool implements RelayPoolApi {
   void close() {
     for (final channel in _channels) {
       if (channel.closeCode == null) {
-        channel.sink.close(status.goingAway);
+        channel.sink.close(status.normalClosure);
       } else {
         continue;
       }
