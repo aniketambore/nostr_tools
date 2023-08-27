@@ -1,3 +1,7 @@
+## 1.0.9
+
+- Improved the functionality of the `RelayPool` class by adding support for various message types besides `EVENT`. This enhancement allows for a more versatile use of the `RelayPool`. (Pull Request #3)
+
 ## 1.0.8
 
 - Fixed a bug in `relay_impl` and `relay_pool_impl` that caused the first message to be skipped when calling `RelayEvent.connect`. This ensures proper addition of messages to the controller. (Pull Request #2)
