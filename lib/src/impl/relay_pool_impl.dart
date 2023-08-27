@@ -7,6 +7,7 @@ import 'package:nostr_tools/src/api/api.dart';
 import 'package:nostr_tools/src/models/models.dart';
 import 'package:nostr_tools/src/utils/utils.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/status.dart' as status;
 
 class RelayPool implements RelayPoolApi {
   final List<String> relays;
@@ -33,7 +34,6 @@ class RelayPool implements RelayPoolApi {
           (event) {
             Message message = Message.deserialize(event as String);
 
-            String? id = message.message is Event ? message.message.id : null;
             if (!_connectedRelays.contains(relayUrl)) {
               _connectedRelays.add(relayUrl);
               _failedRelays.remove(
@@ -41,8 +41,15 @@ class RelayPool implements RelayPoolApi {
               ); // remove from failed relays set if previously failed
               onEvent?.call(RelayEvent.connect);
             }
-            if (id != null && !_receivedMessageIds.contains(id)) {
-              _receivedMessageIds.add(id);
+
+            if (message.message is Event) {
+              String? id = message.message is Event ? message.message.id : null;
+
+              if (id != null && !_receivedMessageIds.contains(id)) {
+                _receivedMessageIds.add(id);
+                controller.add(message);
+              }
+            } else {
               controller.add(message);
             }
           },
@@ -57,7 +64,9 @@ class RelayPool implements RelayPoolApi {
             }
           },
           onDone: () {
-            if (_channels.every((c) => c.closeCode != null)) {
+            if (_channels.every((c) => (c.closeCode != null &&
+                c.closeCode != 1000 &&
+                c.closeCode != 1005))) {
               final error =
                   '[!] All WebSockets closed with code ${_channels.map((c) => c.closeCode).toList()}';
               controller.addError(error);
@@ -88,7 +97,11 @@ class RelayPool implements RelayPoolApi {
   @override
   void close() {
     for (final channel in _channels) {
-      channel.sink.close();
+      if (channel.closeCode == null) {
+        channel.sink.close(status.normalClosure);
+      } else {
+        continue;
+      }
     }
     _connectedRelays.clear();
     _failedRelays.clear();
